@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CourseManager.Domain\CourseManager.Domain.csproj" />
+    <ProjectReference Include="..\CourseManager.Infrastructure\CourseManager.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
