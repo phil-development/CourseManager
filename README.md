@@ -5,17 +5,18 @@ Seguindo **boas práticas** com **arquitetura em camadas**, **padrão Repository
 
 ---
 
-## ✅ **Tecnologias Utilizadas**
+## ⚡ **Tecnologias Utilizadas**
 
 - **.NET 9** (ASP.NET Core Web API)
 - **Entity Framework Core (Code-First)**
 - **SQL Server**
 - **Arquitetura em Camadas + Padrão Repository**
 - **Swagger (OpenAPI)** para documentação
+- **Docker + Docker Compose** para ambiente padronizado
 
 ---
 
-## ✅ **Arquitetura do Projeto**
+## 🗂️ **Arquitetura do Projeto**
 
 ```
 CourseManager/
@@ -29,43 +30,77 @@ CourseManager/
 
 ## ⚙️ **Configuração**
 
-### **Pré-requisitos**
-- .NET 9 instalado
-- SQL Server instalado e configurado
-- Connection String ajustada em `appsettings.json`
+### ✅ **Pré-requisitos**
+- 🟦 **.NET 9** instalado (para rodar localmente, opcional com Docker)
+- 🐳 **Docker e Docker Compose** instalados
 
-Exemplo (`CourseManager.API/appsettings.json`):
+### 🔗 **Connection String**
+Por padrão, o projeto já vem configurado para o **banco do container Docker**.  
+Se quiser usar **localmente**, altere a string no arquivo `appsettings.json`:
 
+#### **Padrão (Docker)** ✅
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=sqlserver,1433;Database=CourseManagerDB;User Id=sa;Password=Admin@123;TrustServerCertificate=True;"
+}
+```
+
+#### **Para uso local (sem Docker)**
 ```json
 "ConnectionStrings": {
   "DefaultConnection": "Server=ServerName;Database=CourseManagerDB;User Id=sa;Password=YourPassword;TrustServerCertificate=True;"
 }
 ```
 
-### **Rodar Localmente**
+---
 
-1. Restaurar pacotes:
+## 🐳 **Rodar com Docker (Recomendado)**
+
+1. **Subir os containers (API + SQL Server):**
    ```bash
-   dotnet restore
+   docker-compose up -d --build
    ```
-2. Aplicar migrations (caso ainda não tenha criado o banco):
+
+2. **Acessar a API no navegador:**
+   👉 [http://localhost:8080/swagger](http://localhost:8080/swagger)
+
+3. **Conectar no SQL Server via SSMS (opcional):**
+   - 🖥️ **Servidor**: `localhost,1433`
+   - 👤 **Usuário**: `sa`
+   - 🔑 **Senha**: `Admin@123`
+
+4. **Parar os containers:**
    ```bash
-   dotnet ef database update -p CourseManager.Infrastructure -s CourseManager.API
-   ```
-3. Rodar a API:
-   ```bash
-   dotnet run --project CourseManager.API
-   ```
-4. Acessar no navegador:
-   ```
-   http://localhost:5211/swagger
+   docker-compose down
    ```
 
 ---
 
-## 📡 **Endpoints**
+## 💻 **Rodar Localmente (Sem Docker)**
 
-### **1. Users**
+1. **Restaurar pacotes:**
+   ```bash
+   dotnet restore
+   ```
+
+2. **Aplicar migrations:**
+   ```bash
+   dotnet ef database update -p CourseManager.Infrastructure -s CourseManager.API
+   ```
+
+3. **Rodar a API:**
+   ```bash
+   dotnet run --project CourseManager.API
+   ```
+
+4. **Acessar no navegador:**
+   👉 [http://localhost:5211/swagger](http://localhost:5211/swagger)
+
+---
+
+## 📡 **Endpoints Principais**
+
+### 👤 **Users**
 
 | Método | Endpoint          | Descrição              |
 |--------|-------------------|------------------------|
@@ -75,7 +110,7 @@ Exemplo (`CourseManager.API/appsettings.json`):
 | PUT    | `/api/users/{id}` | Atualiza um usuário    |
 | DELETE | `/api/users/{id}` | Remove um usuário      |
 
-#### **Exemplo de Request - POST**
+#### 🔗 **Exemplo de Request - POST**
 ```json
 {
   "userLogin": "john.doe",
@@ -88,7 +123,7 @@ Exemplo (`CourseManager.API/appsettings.json`):
 
 ---
 
-### **2. UserDetails (Integrado ao Users)**
+### 🏠 **UserDetails (Integrado ao Users)**
 
 | Método | Endpoint                          | Descrição                          |
 |--------|-----------------------------------|------------------------------------|
@@ -96,7 +131,7 @@ Exemplo (`CourseManager.API/appsettings.json`):
 | POST   | `/api/users/{userId}/details`     | Cria detalhes para o usuário       |
 | PUT    | `/api/users/{userId}/details`     | Atualiza detalhes do usuário       |
 
-#### **Exemplo de Request - POST**
+#### 🔗 **Exemplo de Request - POST**
 ```json
 {
   "cpf": "12345678901",
@@ -107,7 +142,7 @@ Exemplo (`CourseManager.API/appsettings.json`):
 
 ---
 
-### **3. Courses**
+### 📘 **Courses**
 
 | Método | Endpoint           | Descrição               |
 |--------|--------------------|-------------------------|
@@ -117,7 +152,7 @@ Exemplo (`CourseManager.API/appsettings.json`):
 | PUT    | `/api/courses/{id}`| Atualiza um curso       |
 | DELETE | `/api/courses/{id}`| Remove um curso         |
 
-#### **Exemplo de Request - POST**
+#### 🔗 **Exemplo de Request - POST**
 ```json
 {
   "courseName": "ASP.NET Core",
@@ -127,7 +162,7 @@ Exemplo (`CourseManager.API/appsettings.json`):
 
 ---
 
-### **4. UserCourses (Integrado ao Users)**
+### 🎓 **UserCourses (Integrado ao Users)**
 
 | Método | Endpoint                                      | Descrição                          |
 |--------|-----------------------------------------------|------------------------------------|
@@ -135,7 +170,7 @@ Exemplo (`CourseManager.API/appsettings.json`):
 | POST   | `/api/users/{userId}/courses`                 | Adiciona curso ao usuário          |
 | DELETE | `/api/users/{userId}/courses/{courseId}`      | Remove um curso do usuário         |
 
-#### **Exemplo de Request - POST**
+#### 🔗 **Exemplo de Request - POST**
 ```json
 {
   "courseId": 2
@@ -146,21 +181,21 @@ Exemplo (`CourseManager.API/appsettings.json`):
 
 ## 🚀 **Objetivos Futuros**
 
-### **1) 🔐 Autenticação e Autorização**
+### 🔐 **Autenticação e Autorização**
 - Implementar **JWT (JSON Web Token)** com roles e claims
 - Perfis de acesso (Administrador, Aluno, Instrutor)
 
-### **2) 🐳 Padronizar Ambiente com Docker**
-- Criar **docker-compose** para subir **API + Banco (SQL Server)** em um único comando
+### 🐳 **Padronizar Ambiente com Docker**
+✅ **Concluído** – API e SQL Server já executando via **docker-compose**
 
-### **3) 📈 Escalar Estrutura do Sistema**
+### 📈 **Escalar Estrutura do Sistema**
 - **Gestão de Cargos/Perfis** (Administrador, Instrutor, Aluno)
 - **Responsáveis por cursos** (Instrutores vinculados a cursos)
 - **Carga horária e descrição detalhada dos cursos**
 - **Histórico de progresso do aluno nos cursos**
 - **Certificação ao concluir cursos**
 
-### **4) ✅ Testes e Qualidade**
+### 🧪 **Testes e Qualidade**
 - Testes unitários e de integração (xUnit)
 - Configuração de CI/CD para build e testes automáticos
 
@@ -170,8 +205,8 @@ Exemplo (`CourseManager.API/appsettings.json`):
 
 ✔ **Arquitetura em camadas** separando responsabilidades  
 ✔ **Padrão Repository** para desacoplamento da camada de dados  
-✔ **Atualização automática do campo `UpdatedAt` em updates**  
 ✔ **Endpoints RESTful e semânticos** (relacionamentos dentro dos endpoints principais)  
+✔ **Migrations aplicadas automaticamente ao iniciar a API**
 
 ---
 
@@ -181,6 +216,6 @@ Este projeto está sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE)
 
 ---
 
-# 📌 **Autor**
+# 👨‍💻 **Autor**
 
 Desenvolvido por **Filipe Vilarino** – 2025.

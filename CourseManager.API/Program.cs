@@ -8,23 +8,23 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Conexão com o banco SQL Server
+// ? Conexão com o banco SQL Server
 builder.Services.AddDbContext<CourseManagerContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Injeção de Dependências - Services
+// ? Injeção de Dependências - Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IUserDetailService, UserDetailService>();
 builder.Services.AddScoped<IUserCourseService, UserCourseService>();
 
-// Injeção de Dependências - Repositories
+// ? Injeção de Dependências - Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IUserDetailRepository, UserDetailRepository>();
 builder.Services.AddScoped<IUserCourseRepository, UserCourseRepository>();
 
-// Configuração do Swagger
+// ? Configuração do Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -39,18 +39,26 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// ? Ativa Swagger apenas em desenvolvimento
+// ? Swagger apenas em desenvolvimento
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "CourseManager API v1");
-        c.RoutePrefix = "swagger"; // URL: http://localhost:5211/swagger
+        c.RoutePrefix = "swagger"; // URL: http://localhost:8080/swagger
     });
 }
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+// ? MIGRATIONS AUTOMÁTICAS AO INICIAR
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CourseManagerContext>();
+    db.Database.Migrate();
+}
+
 app.Run();
